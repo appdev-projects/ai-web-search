@@ -1,5 +1,5 @@
-# rails-8-template
+# AI Web Search
 
-For your AppDev Projects!
+A project to demo OpenAI's web search and structured outputs capabilities.
 
 Some rights reserved — see [LICENSE.txt](LICENSE.txt)
