@@ -1,0 +1,48 @@
+<article>
+  <header>
+    <h2>
+      Edit prompt
+    </h2>
+  </header>
+
+  <form action="/insert_report" method="post">
+    <div>
+      <label for="prompt_box">
+        Prompt
+      </label>
+
+      <textarea name="query_prompt" id="prompt_box">Assume the role of a software engineer researching the latest advancements, risks, and backlash involving popular AI models and companies on the web. Search and reference real articles published between August 1st and August 26th 2025. The articles should be about some of the following topics: the benefits and drawbacks of different AI models and tools (e.g., Deep Research, Structured Outputs, Image/Video Generation). Your job is to search the web, summarize the appropriate articles, and structure the output accordingly. Double check to make sure the article was published on the correct date.</textarea>
+    </div>
+
+    <button type="submit">
+      Submit
+    </button>
+  </form>
+</article>
+
+<hr>
+
+<article>
+  <header>
+    <h2>
+      Feed
+    </h2>
+  </header>
+  <ul>
+    <% @list_of_reports.each do |a_report| %>
+      <li>
+        <a href="<%= a_report.url %>">
+          <%= a_report.title %>
+        </a>
+        <p>
+          <div>
+            <i><%= a_report.date.strftime("%b %d, %Y") %></i>
+          </div>
+          <%= a_report.summary %>
+        </p>
+      </li>
+    <% end %>
+  </ul>
+</article>
+
+<hr>
