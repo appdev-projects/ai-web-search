@@ -2,8 +2,11 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/universal
 {
   "name": "Container",
-  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "firstdraft/appdev-rails-8-template",
+  // Use docker-compose to run app with separate PostgreSQL service
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/ai-web-search",
+  "shutdownAction": "stopCompose",
 
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
