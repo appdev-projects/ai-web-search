@@ -8,7 +8,7 @@
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
-ARG RUBY_VERSION=3.2.1
+ARG RUBY_VERSION=3.4.1
 FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
 # Rails app lives here
@@ -70,3 +70,45 @@ ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 # Start server via Thruster by default, this can be overwritten at runtime
 EXPOSE 80
 CMD ["./bin/thrust", "./bin/rails", "server"]
+
+# Development stage for devcontainer
+FROM base AS development
+
+# Install dev packages and PostgreSQL
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+    build-essential \
+    git \
+    libpq-dev \
+    libyaml-dev \
+    pkg-config \
+    vim \
+    curl \
+    wget \
+    sudo \
+    bash-completion \
+    graphviz \
+    redis-server \
+    postgresql \
+    postgresql-contrib && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Set up PostgreSQL
+RUN service postgresql start && \
+    sudo -u postgres createuser -s root && \
+    sudo -u postgres createdb root || true
+
+# Set up development environment
+ENV RAILS_ENV=development \
+    BUNDLE_PATH=/usr/local/bundle \
+    PGHOST=localhost \
+    PGUSER=postgres
+
+WORKDIR /rails
+
+# Copy application files
+COPY . .
+
+# Install dependencies
+RUN bundle install && \
+    yarn install || npm install || true
