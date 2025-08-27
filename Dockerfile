@@ -70,3 +70,38 @@ ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 # Start server via Thruster by default, this can be overwritten at runtime
 EXPOSE 80
 CMD ["./bin/thrust", "./bin/rails", "server"]
+
+# Development stage for devcontainer
+FROM base AS development
+
+# Install dev packages
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+    build-essential \
+    git \
+    libpq-dev \
+    libyaml-dev \
+    pkg-config \
+    vim \
+    curl \
+    wget \
+    sudo \
+    bash-completion \
+    graphviz \
+    redis-server && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Create a non-root user with sudo access
+RUN groupadd --system --gid 1000 ruby && \
+    useradd ruby --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
+    echo "ruby ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    chown -R ruby:ruby /rails
+
+# Switch to ruby user
+USER ruby
+
+# Set up development environment
+ENV RAILS_ENV=development \
+    BUNDLE_PATH=/usr/local/bundle
+
+WORKDIR /workspace

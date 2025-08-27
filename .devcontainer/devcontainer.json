@@ -1,18 +1,32 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/universal
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
 {
-  "name": "Container",
-  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "firstdraft/appdev-rails-8-template",
+  "name": "Rails Dev Container",
+  
+  // Build from the Rails Dockerfile in the repository root
+  "build": {
+    "context": "..",
+    "dockerfile": "../Dockerfile",
+    "target": "development"
+  },
 
   // Features to add to the dev container. More info: https://containers.dev/features.
-  // "features": {},
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+
+  // Use docker-compose to run with PostgreSQL service
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [3000, 4567, 9292],
+  "forwardPorts": [3000, 4567, 9292, 5432],
 
   "portsAttributes": {
     "3000": {
+      "label": "Rails Server",
       "onAutoForward": "silent"
     },
     "4567": {
@@ -20,26 +34,43 @@
     },
     "9292": {
       "onAutoForward": "silent"
+    },
+    "5432": {
+      "label": "PostgreSQL",
+      "onAutoForward": "silent"
     }
   },
 
   "otherPortsAttributes": {"onAutoForward": "ignore"},
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "bin/setup && gem install rufo && gem install htmlbeautifier",
+  "postCreateCommand": "bash .devcontainer/setup.sh",
 
   // Configure tool-specific properties.
   "customizations": {
     "vscode": {
-      "extensions": ["vortizhe.simple-ruby-erb",
-                     "mbessey.vscode-rufo",
-                     "aliariff.vscode-erb-beautify",
-                     "eamodio.gitlens",
-                     "setobiralo.erb-commenter",
-                     "firstdraft.terminal-clear"]
+      "extensions": [
+        "vortizhe.simple-ruby-erb",
+        "mbessey.vscode-rufo",
+        "aliariff.vscode-erb-beautify",
+        "eamodio.gitlens",
+        "setobiralo.erb-commenter",
+        "firstdraft.terminal-clear",
+        "castwide.solargraph",
+        "kaiwood.endwise"
+      ]
     }
-  }
+  },
 
-  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-  // "remoteUser": "root"
+  // Set environment variables
+  "containerEnv": {
+    "DB_HOST": "db",
+    "DB_USERNAME": "postgres",
+    "DB_PASSWORD": "postgres",
+    "DB_PORT": "5432",
+    "RAILS_ENV": "development"
+  },
+
+  // Use the ruby user instead of root
+  "remoteUser": "ruby"
 }
