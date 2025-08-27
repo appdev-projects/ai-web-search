@@ -8,6 +8,7 @@ services:
       PGHOST: db
       PGUSER: postgres
       PGPASSWORD: postgres
+      PGDATABASE: ai_web_search_development
     command: /bin/sh -c "while sleep 1000; do :; done"
     depends_on:
       db:

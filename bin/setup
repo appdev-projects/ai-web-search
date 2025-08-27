@@ -26,6 +26,13 @@ FileUtils.chdir APP_ROOT do
   # end
 
   puts "\n== Preparing database =="
+  if ENV["CODESPACE_NAME"] && ENV["PGHOST"] == "db"
+    puts "Waiting for PostgreSQL to be ready..."
+    until system("pg_isready -h db -U postgres", out: File::NULL, err: File::NULL)
+      sleep 2
+    end
+    puts "PostgreSQL is ready!"
+  end
   system! "bin/rails db:prepare"
 
   puts "\n== Removing old logs and tempfiles =="
