@@ -6,20 +6,16 @@
   // Build from the Rails Dockerfile in the repository root
   "build": {
     "context": "..",
-    "dockerfile": "../Dockerfile",
+    "dockerfile": "Dockerfile",
     "target": "development"
   },
 
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers-contrib/features/postgres-asdf:1": {}
   },
-
-  // Use docker-compose to run with PostgreSQL service
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "app",
-  "workspaceFolder": "/workspace",
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   "forwardPorts": [3000, 4567, 9292, 5432],
@@ -44,7 +40,7 @@
   "otherPortsAttributes": {"onAutoForward": "ignore"},
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "postCreateCommand": "sudo service postgresql start && bundle install && gem install rufo htmlbeautifier solargraph && bin/rails db:create db:migrate db:seed || true",
 
   // Configure tool-specific properties.
   "customizations": {
@@ -64,13 +60,12 @@
 
   // Set environment variables
   "containerEnv": {
-    "DB_HOST": "db",
+    "DB_HOST": "localhost",
     "DB_USERNAME": "postgres",
     "DB_PASSWORD": "postgres",
     "DB_PORT": "5432",
     "RAILS_ENV": "development"
-  },
+  }
 
-  // Use the ruby user instead of root
-  "remoteUser": "ruby"
+  // Run as default user from Dockerfile
 }

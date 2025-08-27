@@ -74,7 +74,7 @@ CMD ["./bin/thrust", "./bin/rails", "server"]
 # Development stage for devcontainer
 FROM base AS development
 
-# Install dev packages
+# Install dev packages and PostgreSQL
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
     build-essential \
@@ -88,20 +88,27 @@ RUN apt-get update -qq && \
     sudo \
     bash-completion \
     graphviz \
-    redis-server && \
+    redis-server \
+    postgresql \
+    postgresql-contrib && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-# Create a non-root user with sudo access
-RUN groupadd --system --gid 1000 ruby && \
-    useradd ruby --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
-    echo "ruby ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-    chown -R ruby:ruby /rails
-
-# Switch to ruby user
-USER ruby
+# Set up PostgreSQL
+RUN service postgresql start && \
+    sudo -u postgres createuser -s root && \
+    sudo -u postgres createdb root || true
 
 # Set up development environment
 ENV RAILS_ENV=development \
-    BUNDLE_PATH=/usr/local/bundle
+    BUNDLE_PATH=/usr/local/bundle \
+    PGHOST=localhost \
+    PGUSER=postgres
 
-WORKDIR /workspace
+WORKDIR /rails
+
+# Copy application files
+COPY . .
+
+# Install dependencies
+RUN bundle install && \
+    yarn install || npm install || true
