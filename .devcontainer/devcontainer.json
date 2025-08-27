@@ -8,6 +8,15 @@
   "workspaceFolder": "/workspaces/ai-web-search",
   "shutdownAction": "stopCompose",
 
+  // Container environment variables to ensure database connection works
+  "containerEnv": {
+    "DATABASE_URL": "postgresql://postgres:postgres@db:5432/ai_web_search_development",
+    "PGHOST": "db",
+    "PGUSER": "postgres",
+    "PGPASSWORD": "postgres",
+    "PGDATABASE": "ai_web_search_development"
+  },
+
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
 
