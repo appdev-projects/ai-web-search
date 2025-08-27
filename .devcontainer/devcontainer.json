@@ -6,7 +6,7 @@
   // Build from the Rails Dockerfile in the repository root
   "build": {
     "context": "..",
-    "dockerfile": "Dockerfile",
+    "dockerfile": "../Dockerfile",
     "target": "development"
   },
 
