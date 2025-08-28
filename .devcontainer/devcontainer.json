@@ -8,7 +8,6 @@
 
   // Container environment variables to ensure database connection works
   "containerEnv": {
-    "DATABASE_URL": "postgres://student:postgres@localhost:5432/ai_web_search?encoding=utf8&pool=5&timeout=5000",
     "PGHOST": "localhost",
     "PGUSER": "student",
     "PGPASSWORD": "postgres",
