@@ -13,7 +13,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
+      POSTGRES_USER: student
       POSTGRES_DB: postgres
   
   redis:

@@ -8,8 +8,11 @@
 
   // Container environment variables to ensure database connection works
   "containerEnv": {
-    // "DATABASE_URL": "postgresql://postgres:postgres@db:5432/ai_web_search_development"
-    "DATABASE_URL": "postgres://postgres:postgres@localhost:5432/ai_web_search?encoding=utf8&pool=5&timeout=5000"
+    "DATABASE_URL": "postgres://student:postgres@localhost:5432/ai_web_search?encoding=utf8&pool=5&timeout=5000",
+    "PGHOST": "localhost",
+    "PGUSER": "student",
+    "PGPASSWORD": "postgres",
+    "PGDATABASE": "postgres"
   },
 
   // Features to add to the dev container. More info: https://containers.dev/features.
