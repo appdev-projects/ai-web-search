@@ -106,7 +106,6 @@ __git_complete g __git_main" >> ~/.bash_aliases \
     && echo "alias grade='rake grade'" >> ~/.bash_aliases \
     && echo "alias grade:reset_token='rake grade:reset_token'" >> ~/.bash_aliases \
     && echo 'export PATH="$PWD/bin:$PATH"' >> ~/.bashrc \
-    && echo "nohup /workspaces/*/bin/postgres-monitor > /dev/null 2>&1 &" >> ~/.bashrc \
     && echo "# Configure bundler and RVM paths" >> ~/.bashrc \
     && echo 'export BUNDLE_PATH="/home/student/.bundle"' >> ~/.bashrc \
     && echo 'export GEM_HOME="/home/student/.rvm/gems/ruby-3.4.1"' >> ~/.bashrc \
