@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:focal
 
 ### base ###
 ENV DEBIAN_FRONTEND=noninteractive LANG=en_US.UTF-8
@@ -17,12 +17,9 @@ RUN yes | unminimize \
         libpq-dev \
         sudo \
         git \
-        graphviz \
+        graphviz=2.42.2-3build2 \
         psmisc \
-        postgresql-client \
-        postgresql-client-common \
-        libpq-dev \
-        redis-server \
+        redis-server=5:5.0.7-2ubuntu0.1 \
     && locale-gen en_US.UTF-8 \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* \
     # Container user
@@ -60,7 +57,12 @@ WORKDIR /rails-template
 
 # Pre-install gems into /rails-template/gems/
 COPY --chown=student:student Gemfile Gemfile.lock /rails-template/
-RUN /bin/bash -l -c "bundle config set --local path '/home/student/.bundle' && bundle install"
+RUN /bin/bash -l -c "bundle config set --local path '/home/student/.bundle' && bundle install" \
+    # Install postgresql 16
+    && sudo sh -c 'echo "deb https://apt-archive.postgresql.org/pub/repos/apt focal-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
+    && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - \
+    && sudo apt-get update \
+    && sudo apt-get install -y postgresql-16 postgresql-contrib-16
 
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - \
     # Install Node.js and Yarn
