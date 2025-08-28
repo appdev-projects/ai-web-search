@@ -17,9 +17,12 @@ RUN yes | unminimize \
         libpq-dev \
         sudo \
         git \
-        graphviz=2.42.2-3build2 \
+        graphviz \
         psmisc \
-        redis-server=5:5.0.7-2ubuntu0.1 \
+        postgresql-client \
+        postgresql-client-common \
+        libpq-dev \
+        redis-server \
     && locale-gen en_US.UTF-8 \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* \
     # Container user
@@ -57,32 +60,7 @@ WORKDIR /rails-template
 
 # Pre-install gems into /rails-template/gems/
 COPY --chown=student:student Gemfile Gemfile.lock /rails-template/
-RUN /bin/bash -l -c "bundle config set --local path '/home/student/.bundle' && bundle install" \
-    # Install postgresql 16
-    && sudo sh -c 'echo "deb https://apt-archive.postgresql.org/pub/repos/apt focal-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
-    && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - \
-    && sudo apt-get update \
-    && sudo apt-get install -y postgresql-16 postgresql-contrib-16
-
-# Setup PostgreSQL configuration
-ENV PATH="$PATH:/usr/lib/postgresql/16/bin" PGDATA="/workspaces/.pgsql/data"
-RUN sudo mkdir -p $PGDATA \
-    && mkdir -p ~/.pg_ctl/bin ~/.pg_ctl/sockets \
-    && printf '#!/bin/bash\n[ ! -d $PGDATA ] && mkdir -p $PGDATA && initdb -D $PGDATA\npg_ctl -D $PGDATA -l ~/.pg_ctl/log -o "-k ~/.pg_ctl/sockets" start\n' > ~/.pg_ctl/bin/pg_start \
-    && printf '#!/bin/bash\npg_ctl -D $PGDATA -l ~/.pg_ctl/log -o "-k ~/.pg_ctl/sockets" stop\n' > ~/.pg_ctl/bin/pg_stop \
-    && chmod +x ~/.pg_ctl/bin/* \
-    && sudo addgroup dev \
-    && sudo adduser student dev \
-    && sudo chgrp -R dev $PGDATA \
-    && sudo chmod -R 775 $PGDATA \
-    && sudo setfacl -dR -m g:staff:rwx $PGDATA \
-    && sudo chmod 777 /var/run/postgresql \
-    # This is a bit of a hack. At the moment we have no means of starting background
-    # tasks from a Dockerfile. This workaround checks, on each bashrc eval, if the
-    # PostgreSQL server is running, and if not starts it.
-    && printf "\n# Auto-start PostgreSQL server.\n[[ \$(pg_ctl status | grep PID) ]] || pg_start > /dev/null\n" >> ~/.bashrc
-ENV PATH="$PATH:$HOME/.pg_ctl/bin" PGHOSTADDR="127.0.0.1" PGDATABASE="postgres"
-
+RUN /bin/bash -l -c "bundle config set --local path '/home/student/.bundle' && bundle install"
 
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - \
     # Install Node.js and Yarn
